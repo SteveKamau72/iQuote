@@ -1,12 +1,5 @@
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  ListView,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  TextInput, ActivityIndicator
+import { StyleSheet, ListView, Text, View, Image, TouchableOpacity, TextInput, ActivityIndicator, Share
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 
@@ -59,7 +52,13 @@ searchQuoteRequest(){
             <View style={styles.quoteRow}>
               <Text style={styles.bodyQuoteText}>{quote.body}</Text>
               <Text> - {quote.author}</Text>
-              <Text style={styles.tagsQuote}>tags: {quote.tags}</Text>
+              <View style={styles.bottomContainer}>
+                   <Text style={styles.tagsQuote}>tags: {quote.tags}</Text>
+                   <TouchableOpacity style={styles.shareContainer} onPress={this.shareQuote.bind(this,quote)}>
+                      <Text style={styles.shareText}>Share</Text>
+                      <Image source={require('../images/ic_share.png')} style= {styles.shareImage}/>
+                   </TouchableOpacity>
+              </View>
             </View>
         </View>
       )
@@ -94,6 +93,17 @@ _onSearch(query){
   // alert(query);
   this.setState({searchQuery : query});
   this.searchQuoteRequest();
+}
+
+shareQuote(quote){
+  // alert(quote);
+   Share.share({
+    message: quote.body+'\n- '+quote.author,
+  }, {
+    dialogTitle: 'Share Quote',
+  })
+  .then(this._showResult)
+  .catch(err => console.log(err))
 }
 
 static navigationOptions = ({ navigation }) => {
@@ -166,4 +176,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 30
    },
+    bottomContainer:{
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5
+  },
+  shareContainer:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent:'center', 
+    borderRadius: 20,
+    width:70, 
+    height:17,
+  },
+  shareText:{
+    fontSize: 12,
+    marginLeft:5,
+    color: '#000',
+    fontWeight:'bold', 
+  },
+  shareImage:{
+    height: 20,
+    width: 20,
+  },
 });
